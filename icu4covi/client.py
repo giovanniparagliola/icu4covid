@@ -49,7 +49,7 @@ class Icu4ClovidClient(fl.client.NumPyClient):
 
     def fit(self, parameters, config):
         model.set_weights(parameters)
-        history = model.fit(x_train, y_train, epochs=10, batch_size=32, steps_per_epoch=3)
+        history = model.fit(x_train, y_train, epochs=100, batch_size=32, steps_per_epoch=3)
         accuracy = history.history["binary_accuracy"][0]
         return model.get_weights(), len(x_train), {"accuracy": float(accuracy)}
 
