@@ -78,7 +78,7 @@ def main():
                                       validation_data=(val_x, val_y),
                                       verbose=0,
                                       callbacks=[callback]) #, batch_size=None Hyperparameter['batch_size']
-
+    accuracy = history.history["binary_accuracy"][0]
     loss, accuracy = global_model.evaluate(test_x, test_y)
     print("accuracy{}:".format(float(accuracy)))
 
