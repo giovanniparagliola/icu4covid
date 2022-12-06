@@ -1,22 +1,31 @@
 import flwr as fl
-import tensorflow as tf
 import AmicoModel as am
-
-#data model
-
-
-
-(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
-
-
+import datetime
+import random
+import os
+import tensorflow as tf
+from data_utility import *
+from tensorflow import keras
+#from fl_utils import *
+import argparse
+import warnings
+warnings.filterwarnings('ignore')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+#(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
+parser = argparse.ArgumentParser(description='')
+parser.add_argument('--nClient', default=0, type=int)
+args = parser.parse_args()
+print("Data Loading...")
+x_train, y_train, x_val, y_val, x_test, y_test = getDataSet(args.nClient)
+print("Data Loaded Complete")
 Hyperparameter = {
     'lr': 0.0001,
     'n_layer': 1,
     'lstm_outputs': 20,
     'n_hidden_fc': 2048,
     'batch_size': 32,
-    'n_epoch': 2000,  # 2500
-    'n_iteration': 1000,  # 1000
+    'n_epoch': 1,  # 2500
+    'n_iteration': 1,  # 1000
     'l2_penalty': 0.10,
     'kernel_size': 10,  # 10
     'filter_size': 8,  # 4
@@ -25,16 +34,16 @@ Hyperparameter = {
     'pool_size': 10,
     'pool_size_l2': 10
 }
-timepoints=310
-global_model = am.LSTM_CNN_DNN_Flattten_v2(hp=Hyperparameter,
+timepoints=300
+model = am.LSTM_CNN_DNN_Flattten_v2(hp=Hyperparameter,
                                            timestap=timepoints,
                                            nfeatures=3)  # am.CNN_LSTM_DNN_Flattten(hp = Hyperparameter, timestap=timepoints, nfeatures=3)
-global_model.compile(loss=tf.keras.losses.BinaryCrossentropy(),
+model.compile(loss=tf.keras.losses.BinaryCrossentropy(),
                      optimizer=tf.keras.optimizers.Adam(),
                      metrics=[tf.keras.metrics.binary_accuracy])
 
-model = tf.keras.applications.MobileNetV2((32, 32, 3), classes=10, weights=None)
-model.compile("adam", "sparse_categorical_crossentropy", metrics=["accuracy"])
+#model = tf.keras.applications.MobileNetV2((32, 32, 3), classes=10, weights=None)
+#model.compile("adam", "sparse_categorical_crossentropy", metrics=["accuracy"])
 
 
 class CifarClient(fl.client.NumPyClient):
